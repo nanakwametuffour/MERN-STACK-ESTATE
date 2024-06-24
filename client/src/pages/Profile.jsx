@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 export default function Profile() {
   const { currentUser } = useSelector((state) => state.user);
   return (
-    <div className=" max-w-lg mx-auto">
+    <div className=" max-w-lg mx-auto p-4">
       <h1 className="text-center font-semibold text-3xl my-7">profile</h1>
       <form className="flex flex-col gap-4">
         <img
