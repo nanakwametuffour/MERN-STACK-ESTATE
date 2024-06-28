@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 import {
   getDownloadURL,
   getStorage,
@@ -27,6 +27,8 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [updateSucces, setUpdateSuccess] = useState(false);
   const [formData, setFormData] = useState({});
+  const [showListingError, setShowListingError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -104,21 +106,34 @@ export default function Profile() {
     }
   };
 
-  const handleSignOut = async()=>{
+  const handleSignOut = async () => {
     try {
-       dispatch(signOutStart())
+      dispatch(signOutStart());
       const res = await fetch("/api/auth/signout");
-        const data = await res.json()
-         if(data.success === false){
-           dispatch(signOutFailure(data.message))
-           return
-         }
-         dispatch(signOutSuccess(data))
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutFailure(data.message));
+        return;
+      }
+      dispatch(signOutSuccess(data));
     } catch (error) {
-       dispatch(signOutFailure(data.message));
+      dispatch(signOutFailure(data.message));
     }
-  }
-
+  };
+  const handleShowListing = async () => {
+    try {
+      setShowListingError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success == false) {
+        setShowListingError(true);
+        return;
+      }
+      setUserListings(data);
+    } catch (error) {
+      setShowListingError(true);
+    }
+  };
   return (
     <div className=" max-w-lg mx-auto p-4">
       <h1 className="text-center font-semibold text-3xl my-7">profile</h1>
@@ -179,10 +194,13 @@ export default function Profile() {
         >
           {loading ? "loading..." : " update"}
         </button>
-         <Link className="bg-green-700 p-3 rounded-lg text-center
-          text-white uppercase hover:opacity-90 disabled:opacity-80" to={'/create-listing'}>
-            Create Listing
-         </Link>
+        <Link
+          className="bg-green-700 p-3 rounded-lg text-center
+          text-white uppercase hover:opacity-90 disabled:opacity-80"
+          to={"/create-listing"}
+        >
+          Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-4">
         <span
@@ -199,6 +217,45 @@ export default function Profile() {
       <p className="text-green-700 mt-5">
         {updateSucces ? "Succesfully update.." : ""}
       </p>
+      <button onClick={handleShowListing} className="text-green-700 w-full">
+        show listings
+      </button>
+      <p className="text-red-700 mt-4">
+        {showListingError ? "Error showing the listings" : ""}
+      </p>
+
+      {userListings && userListings.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h1 className="text-center my-4 text-2xl font-semibold">Your Listing</h1>
+          {userListings.map((listing) => (
+            <div
+              key={listing._id}
+              className="flex items-center border rounded-lg p-3 justify-between  gap-4"
+            >
+              <Link
+                to={`/listing/${listing._id}`}
+                // className="text-slate-700 font-semibold hover:underline truncate flex-1"
+              >
+                <img
+                  className="h-16 w-16 object-contain"
+                  src={listing.imageUrls[0]}
+                  alt="listing cover"
+                />
+              </Link>
+              <Link
+                className="text-slate-700 font-semibold hover:underline truncate flex-1"
+                to={`/listing/${listing._id}`}
+              >
+                <p className="truncate">{listing.name}</p>
+              </Link>
+              <div className="flex flex-col items-center">
+                <button className="text-red-700 uppercase">Delete</button>
+                <button className="text-green-700 uppercase">edit</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
