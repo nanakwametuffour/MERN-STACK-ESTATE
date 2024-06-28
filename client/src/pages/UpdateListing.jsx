@@ -171,7 +171,7 @@ export default function UpdateListing() {
         Update a listing
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-5">
-        <div className="flex gap-4 flex-col flex-1">
+        <div className="flex gap-5 flex-col flex-1">
           <input
             type="text"
             id="name"
