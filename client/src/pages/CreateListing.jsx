@@ -273,6 +273,22 @@ export default function CreateListing() {
                 />
                 <label>Baths</label>
               </div>
+              <div className="flex items-center gap-2">
+                <input
+                  className="p-3 border border-gray-300 rounded-lg"
+                  type="number"
+                  id="regularPrice"
+                  min="50"
+                  max={"10000"}
+                  required
+                  onChange={handleChange}
+                  value={formData.regularPrice}
+                />
+                <div className=" flex flex-col items-center">
+                  <label>Regular price</label>
+                  <span className="text-xs">($/month)</span>
+                </div>
+              </div>
               {formData.offer && (
                 <div className="flex items-center gap-2">
                   <input
@@ -291,22 +307,6 @@ export default function CreateListing() {
                   </div>
                 </div>
               )}
-              <div className="flex items-center gap-2">
-                <input
-                  className="p-3 border border-gray-300 rounded-lg"
-                  type="number"
-                  id="regularPrice"
-                  min="50"
-                  max={"10000"}
-                  required
-                  onChange={handleChange}
-                  value={formData.regularPrice}
-                />
-                <div className=" flex flex-col items-center">
-                  <label>Regular price</label>
-                  <span className="text-xs">($/month)</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -327,7 +327,6 @@ export default function CreateListing() {
               multiple
             />
             <button
-          
               type="button"
               disabled={upLoading}
               onClick={handleImageSubmit}
@@ -359,7 +358,10 @@ export default function CreateListing() {
                 </button>
               </div>
             ))}
-          <button disabled={loading || upLoading} className="bg-slate-700 p-3 text-white rounded-lg uppercase hover:opacity-90 disabled:opacity-80">
+          <button
+            disabled={loading || upLoading}
+            className="bg-slate-700 p-3 text-white rounded-lg uppercase hover:opacity-90 disabled:opacity-80"
+          >
             {loading ? "loading..." : " Create Listing"}
           </button>
           {error && <p className="text-red-700 text-xs">{error}</p>}
